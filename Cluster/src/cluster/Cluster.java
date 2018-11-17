@@ -5,12 +5,14 @@
  */
 package cluster;
 
+import com.google.gson.Gson;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import javax.swing.JButton;
@@ -33,6 +35,14 @@ public class Cluster extends JFrame {
     JTextField tfsoma = new JTextField();
     JTextField tfvalor1 = new JTextField();
     JTextField tfvalor2 = new JTextField();
+
+    Gson gson = new Gson();
+
+    ArrayList<String> palavras = new ArrayList<>();
+    ArrayList<String> palavrasJSON = new ArrayList<>();
+    ArrayList<String> vezesPalavraJSON = new ArrayList<>();
+    String texto = null;
+    int codigo;
 
     public Cluster() {
         JPanel tela = new JPanel();
@@ -75,17 +85,28 @@ public class Cluster extends JFrame {
                                 Scanner entrada = new Scanner(cliente1.getInputStream());
                                 System.out.println("recebendo dados do cliente");
 
-                                String texto = entrada.nextLine();
+                                String json = "";
+
+                                Modelo modelo2 = new Modelo();
+
+                                //RECEBENDO A STRING JSON
+                                modelo2 = gson.fromJson(entrada.toString(), Modelo.class);
+
+                                texto = modelo2.getTexto();
+
+                                palavras = modelo2.getPalavras();
 
                                 tfvalor1.setText(texto);
-                                
+
                                 //CHAMANDO FUNÇÃO CONTAGEM PALAVRAS ABAIXO
                                 String[] textoDividido = texto.split(" ");
                                 StringBuilder enviar = new StringBuilder();
                                 double inicial = System.currentTimeMillis();
                                 for (int i = 0; i < textoDividido.length; i++) {
                                     //tfsoma.setText("Palavra " + textoDividido[i] + ": " + contaPalavras(textoDividido[i], texto));
-                                    enviar.append("Palavra ").append(textoDividido[i]).append(": ").append(contaPalavras(textoDividido[i], texto));
+                                    palavrasJSON.add(textoDividido[i]);
+                                    //enviar.append("Palavra ").append(textoDividido[i]).append(": ").append(contaPalavras(textoDividido[i], texto));
+                                    vezesPalavraJSON.add((Integer.toString(contaPalavras(textoDividido[i], texto))));
                                 }
 
                                 double fim = System.currentTimeMillis();
@@ -95,7 +116,17 @@ public class Cluster extends JFrame {
                                 double tempoProcessamento = fim - inicial;
                                 System.out.println("Tempo de Realização da Tarefa: " + tempoProcessamento);
 
-                                Socket cliente = new Socket("127.0.0.1", 9011);
+                                //MONTANDO STRING JSON ABAIXO
+                                codigo = 2;
+
+                                Modelo modelo1 = new Modelo(codigo, palavrasJSON, vezesPalavraJSON);
+                                json = "";
+                                //transformando o modelo em Json
+                                json = gson.toJson(modelo1);
+
+                                //GERANDO GRÁFICOS NA TELA
+                                //MANDANDO PARA O IP QUE RECEBER A MENSAGEM
+                                Socket cliente = new Socket(cliente1.getInetAddress().getHostAddress(), 9011);
                                 //int retorno = contaPalavras(texto);
 
                                 //IMPRIMINDO CONTAGEM DE PALAVRAS
@@ -106,7 +137,8 @@ public class Cluster extends JFrame {
 
                                 //ABAIXO ENVIAR PALAVRAS CONTADAS
                                 //A VARIÁVEL enviar TEM A CONTAGEM DE TODAS AS PALAVRAS DA STRING LIDA
-                                saida.print(enviar);
+                                //ENVIANDO VARIÁVEL JSON COMO RESPOSTA
+                                saida.print(json);
                                 System.out.println("Resposta enviada");
                                 saida.close();
                                 cliente.close();
