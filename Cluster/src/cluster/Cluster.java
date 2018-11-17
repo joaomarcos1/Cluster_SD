@@ -77,7 +77,7 @@ public class Cluster extends JFrame {
 
                             ServerSocket servidor3 = new ServerSocket(9009);
 
-                            System.out.println("Esperando cliente se conectar ao servidor pela porta 9008");
+                            System.out.println("Esperando cliente se conectar ao servidor pela porta 9000");
                             while (true) {
                                 Socket cliente1 = servidor3.accept();
                                 System.out.println("Cliente " + cliente1.getInetAddress().getHostAddress() + " CONECTADO");
