@@ -126,7 +126,7 @@ public class Cluster extends JFrame {
 
                                 //GERANDO GRÁFICOS NA TELA
                                 //MANDANDO PARA O IP QUE RECEBER A MENSAGEM
-                                Socket cliente = new Socket(cliente1.getInetAddress().getHostAddress(), 9011);
+                                Socket cliente = new Socket(cliente1.getInetAddress().getHostAddress(), 9000);
                                 //int retorno = contaPalavras(texto);
 
                                 //IMPRIMINDO CONTAGEM DE PALAVRAS
