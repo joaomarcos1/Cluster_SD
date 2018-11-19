@@ -38,7 +38,7 @@ public class Criptografia {
             cifraDES.init(Cipher.ENCRYPT_MODE, chaveDES);
 
             // Texto puro
-            byte[] textoPuro = "infomração à ser ".getBytes();
+            byte[] textoPuro = "TESTE DE CRIPTOGRAFIA".getBytes();
 
             System.out.println("Texto [Formato de Byte] : " + textoPuro);
             System.out.println("Texto Puro : " + new String(textoPuro));
@@ -47,6 +47,7 @@ public class Criptografia {
             byte[] textoEncriptado = cifraDES.doFinal(textoPuro);
 
             System.out.println("Texto Encriptado : " + textoEncriptado);
+            //System.out.println("Texto Ecriptado como String: "+textoEncriptado.toString());
 
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -55,16 +56,19 @@ public class Criptografia {
                     Socket cliente;
                     try {
                         cliente = new Socket("127.0.0.1", 9011);
-                   
-                        System.out.println("Enviando encriptado para Head Master..");
 
+                        System.out.println("Enviando encriptado para Head Master..");
+                        
+                      
+                        
                         try (PrintStream saida = new PrintStream(cliente.getOutputStream())) {
                             saida.print(textoEncriptado);
                             System.out.println("Resposta enviada");
                         }
                         cliente.close();
-                     } catch (IOException ex) {
+                    } catch (IOException ex) {
                         Logger.getLogger(Criptografia.class.getName()).log(Level.SEVERE, null, ex);
+                        System.out.println("Erro no envio da MENSAGEM CRIPTOGRADA!");
                     }
                 }
             });

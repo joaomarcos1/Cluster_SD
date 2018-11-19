@@ -38,6 +38,12 @@ public class Descriptografador {
 
         System.out.println("Esperando cliente se conectar ao servidor pela porta 9011");
         while (true) {
+            
+            //cifraDES = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+             cifraDES.init(Cipher.ENCRYPT_MODE, chaveDES);
+
+            
             Socket cliente1 = servidor3.accept();
             System.out.println("Cliente " + cliente1.getInetAddress().getHostAddress() + " CONECTADO");
 
@@ -45,17 +51,26 @@ public class Descriptografador {
             System.out.println("recebendo dados do cliente");
 
             String texto = entrada.nextLine();
+
+            //byte[] textoCriptografado = texto.getBytes();
+            //System.out.println("Recebido: " + textoCriptografado);
             System.out.println("Recebido: " + texto);
 
+            
+            
+            // Texto encriptado
             byte[] textoEncriptado = cifraDES.doFinal(texto.getBytes());
+
+            //System.out.println("Texto Encriptado : " + textoEncriptado);
+
             // Inicializa a cifra também para o processo de decriptação
             cifraDES.init(Cipher.DECRYPT_MODE, chaveDES);
 
             // Decriptografa o texto
-            byte[] textoDecriptografado = cifraDES.doFinal(texto.getBytes());
+            byte[] textoDecriptografado = cifraDES.doFinal(textoEncriptado);
 
             System.out.println("Texto Decriptografado : " + new String(textoDecriptografado));
-
+            System.out.println("------------");
         }
     }
 

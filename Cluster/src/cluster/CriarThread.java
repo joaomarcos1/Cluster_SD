@@ -25,7 +25,6 @@ public class CriarThread {
     
     ObjectOutputStream saida;
     Scanner            entrada;
-    
     private int    tempo, indice;
     private double media, valor, soma;
     
