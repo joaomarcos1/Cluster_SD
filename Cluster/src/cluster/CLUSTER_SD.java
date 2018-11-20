@@ -1,9 +1,5 @@
-w/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cluster;
+
 
 import com.google.gson.Gson;
 import java.awt.Color;
@@ -19,16 +15,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 
 /**
  *
  * @author nupasd-ufpi
  */
-public class Cluster extends JFrame {
+public class CLUSTER_SD extends JFrame {
 
     JLabel valor1 = new JLabel("Texto Recebido");
     JLabel valor2 = new JLabel("valor 2");
@@ -47,40 +40,26 @@ public class Cluster extends JFrame {
     String texto = null;
     int codigo;
 
-    JTextArea texto1 = new JTextArea();
-    JScrollPane barraRolagem;
-
-    JTextArea palavras_adicionadas = new JTextArea();
-
-    public Cluster() {
+    public CLUSTER_SD() {
         JPanel tela = new JPanel();
         tela.setLayout(null);
         tela.setBackground(Color.white);
 
         tela.add(valor1);
-        valor1.setBounds(20, 80, 350, 40);
+        valor1.setBounds(20, 60, 350, 40);
 
         tela.add(tfvalor1);
-        tfvalor1.setBounds(130, 80, 240, 40);
+        tfvalor1.setBounds(160, 64, 200, 40);
 
         tela.add(mostrarsoma);
         mostrarsoma.setBounds(20, 180, 350, 40);
 
-        tela.add(palavras_adicionadas);
-        palavras_adicionadas.setBounds(20, 220, 430, 80);
-        palavras_adicionadas.setBorder(new LineBorder(Color.GRAY));
-        palavras_adicionadas.setLineWrap(true);
-        palavras_adicionadas.setWrapStyleWord(true);
-        palavras_adicionadas.setEditable(false);
-        barraRolagem = new JScrollPane(palavras_adicionadas);
-        barraRolagem.setBounds(20, 220, 430, 80);
-        tela.add(barraRolagem);
+        tela.add(tfsoma);
+        tfsoma.setBounds(20, 220, 400, 30);
 
-        //tela.add(tfsoma);
-        //tfsoma.setBounds(20, 220, 430, 80);
         tela.add(iniciar);
 
-        iniciar.setBounds(20, 20, 400, 40);
+        iniciar.setBounds(20, 130, 400, 40);
         iniciar.addActionListener(
                 new ActionListener() {
 
@@ -100,7 +79,6 @@ public class Cluster extends JFrame {
                                 System.out.println("Cliente " + cliente1.getInetAddress().getHostAddress() + " CONECTADO");
 
                                 Scanner entrada = new Scanner(cliente1.getInputStream());
-                                
                                 System.out.println("recebendo dados do cliente");
 
                                 String json = entrada.nextLine();
@@ -117,22 +95,15 @@ public class Cluster extends JFrame {
                                 tfvalor1.setText(texto);
 
                                 //CHAMANDO FUNÇÃO CONTAGEM PALAVRAS ABAIXO
-                                String[] textoDividido = texto.split(" ");
                                 StringBuilder enviar = new StringBuilder();
                                 double inicial = System.currentTimeMillis();
-                                for (int i = 0; i < textoDividido.length; i++) {
-                                    //tfsoma.setText("Palavra " + textoDividido[i] + ": " + contaPalavras(textoDividido[i], texto));
-                                    palavrasJSON.add(textoDividido[i]);
-                                    //enviar.append("Palavra ").append(textoDividido[i]).append(": ").append(contaPalavras(textoDividido[i], texto));
-                                    vezesPalavraJSON.add((Integer.toString(contaPalavras(textoDividido[i], texto))));
+                                for (int i = 0; i < palavras.size(); i++) {
+                                    vezesPalavraJSON.add((Integer.toString(contaPalavras(palavras.get(i), texto))));
                                 }
 
                                 double fim = System.currentTimeMillis();
 
-                                //palavras_adicionadas.setText(enviar.toString());
-                                String aa = enviar.toString();
-                                palavras_adicionadas.insert(aa, palavras_adicionadas.getCaretPosition());
-                                palavras_adicionadas.append("\n");
+                                tfsoma.setText(enviar.toString());
 
                                 double tempoProcessamento = fim - inicial;
                                 System.out.println("Tempo de Realização da Tarefa: " + tempoProcessamento);
@@ -140,10 +111,11 @@ public class Cluster extends JFrame {
                                 //MONTANDO STRING JSON ABAIXO
                                 codigo = 2;
 
-                                Modelo modelo1 = new Modelo(codigo, palavrasJSON, vezesPalavraJSON);
-                                //json = "";
+                                Modelo modelo1 = new Modelo(codigo, palavras, vezesPalavraJSON);
+                                json = "";
                                 //transformando o modelo em Json
                                 json = gson.toJson(modelo1);
+                                System.out.println(json);
 
                                 //GERANDO GRÁFICOS NA TELA
                                 //MANDANDO PARA O IP QUE RECEBER A MENSAGEM
@@ -180,7 +152,7 @@ public class Cluster extends JFrame {
 
         add(tela);
         setVisible(true);
-        setSize(480, 350);
+        setSize(440, 440);
         setLocation(440, 100);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }

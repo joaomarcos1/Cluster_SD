@@ -24,7 +24,9 @@ class Modelo {
 
     
     public Modelo(int codigo, ArrayList<String> palavras, ArrayList<String> vezes){
-        
+        this.codigo = codigo;
+        this.palavras = palavras;
+        this.vezesPalavra = vezes;
     }
     
     
