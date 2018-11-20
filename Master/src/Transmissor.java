@@ -5,6 +5,7 @@
  */
 
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -12,18 +13,23 @@ import java.net.Socket;
 
 public class Transmissor {
     
-    OutputStream osSaida;
-    PrintWriter  pwSaida;
-    Socket       dispositivoCliente;
+    private OutputStream osSaida;
+    private PrintWriter  pwSaida;
+    private Socket       dispositivoCliente;
+    private Gson         gson;
     
-    public void enviar(String mensagem, String ip, int porta){
+    private String       json;
+    
+    public void enviar(Modelo modelo, String ip, int porta){
         try{
+            gson = new Gson();
+            json = gson.toJson(modelo);
             System.out.println("Preparando para enviar mensagem...");
             dispositivoCliente = new Socket(ip, porta);
             osSaida = dispositivoCliente.getOutputStream();
             pwSaida = new PrintWriter(osSaida);
-            pwSaida.print(mensagem);
-            System.out.println("Mensagem Dividida: " + mensagem);
+            pwSaida.print(json);
+            System.out.println("Parametros enviados" + json);
             System.out.println("Mensagem enviada!!!\n");
             osSaida.flush();
             pwSaida.flush();

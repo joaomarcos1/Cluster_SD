@@ -16,28 +16,33 @@ import java.util.Scanner;
  *
  * @author Helbert Monteiro
  */
-public class CriarThread {
+public class Gerencia {
     
     private ServerSocket socketServidor;
     private Socket       dispositivoCliente;
     
     private Scanner  scanner;
     private String   json, subTexto;
-    private int      index;
+    private int      index, codigoCliente, codigoNode;
     private String[] palavras;
     
     private Gson                   gson;
-    private Modelo                 modelo;
+    private Modelo                 modelo, modeloRetorno;
     private NodePalavra            nodePalavra;
     private ArrayList<NodePalavra> listaNodePalavra;
+    private Node                   cliente;
     
     public void run(int porta, ArrayList<Node> listaNodes){
+        codigoCliente = 0;
+        codigoNode    = 0;
+        modeloRetorno = new Modelo();
         try {
             socketServidor = new ServerSocket(porta);
             System.out.println("Ouvindo na porta " + porta + "...");
 
-            while(true) {
+            while(true){
                 dispositivoCliente = socketServidor.accept();
+                
                 System.out.println("\n\nCliente conectado: " + dispositivoCliente.getInetAddress().getHostAddress());
 
                 scanner = new Scanner(dispositivoCliente.getInputStream());
@@ -47,13 +52,25 @@ public class CriarThread {
                 modelo = new Modelo();
                 modelo = gson.fromJson(json, Modelo.class);
                 
+                if(codigoCliente == 0){
+                    cliente = new Node(String.valueOf(modelo.getPortaCliente()), dispositivoCliente.getInetAddress().getHostAddress());
+                    for(int i = 0; i < modelo.getPalavras().size(); i++){
+                        modeloRetorno.iniciaVezes("0");
+                    }
+                    codigoCliente = 1;
+                }
+                
                 switch(modelo.getCodigo()){
                     case 1:
                         distribuir(modelo, listaNodes);
+                        break;
+                    case 2:
+                        System.out.println("Fazendo Redução ...");
+                        reduzir(modelo, cliente, listaNodes, codigoNode);
+                        break;
                 }
                 
-                
-                dispositivoCliente.close();
+                 dispositivoCliente.close();
             }
             
         }catch(IOException a) {
@@ -96,6 +113,19 @@ public class CriarThread {
             new Transmissor().enviar(modelo, listaNodes.get(i).getIp(), Integer.parseInt(listaNodes.get(i).getPorta()));
             
             subTexto = "";
+        }
+    }
+    
+    private void reduzir(Modelo modelo, Node cliente, ArrayList<Node> listaNodes, int codigoNode){
+        for(int j = 0; j < modeloRetorno.getVezesPalavras().size(); j++){
+            modeloRetorno.acrescentaValorVez(j, modelo.getValorVez(j));
+        }
+        codigoNode++;
+        if(codigoNode == listaNodes.size()){
+            modelo = new Modelo(modelo.getPalavras(), modeloRetorno.getVezesPalavras());
+            new Transmissor().enviar(modelo, cliente.getIp(), Integer.parseInt(cliente.getPorta()));
+            codigoCliente = 0;
+            codigoNode    = 0;
         }
     }
 

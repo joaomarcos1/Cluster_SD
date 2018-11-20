@@ -11,6 +11,13 @@
 public class Node {
     private String porta, ip;
     
+    public Node(){}
+    
+    public Node(String porta, String ip){
+        this.porta = porta;
+        this.ip    = ip;
+    }
+    
     public String getPorta(){
         return porta;
     }

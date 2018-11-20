@@ -14,16 +14,17 @@ import java.util.ArrayList;
  */
 public class Conexao {
     
-    private Thread thread;
-    private String porta, ip;
+    private final Thread thread;
     
     public Conexao(ArrayList<Node> listaNodes){
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println("Master ON\n");
-                new CriarThread().run(9000, listaNodes);
-            }});
+                new Gerencia().run(9000, listaNodes);
+            }
+        });
+        
         thread.start();
     }
     

@@ -42,12 +42,15 @@ public class CRYPTO_AES_SERVER {
 
             String texto = entrada.nextLine();
 
-            /*
-            byte[] recebido = null;
+            int tamanho = texto.length();
+            
+            byte[tamanho]recebido = null;
+            
+            
             for (int i = 0; i < texto.length(); i++) {
-                recebido[i] = (byte) texto.charAt(i);
+                recebido = (byte) texto.charAt(i);
             }
-        */
+        
 
             System.out.println("Recebido: " + recebido);
 
