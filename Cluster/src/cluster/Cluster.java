@@ -19,7 +19,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -44,26 +47,40 @@ public class Cluster extends JFrame {
     String texto = null;
     int codigo;
 
+    JTextArea texto1 = new JTextArea();
+    JScrollPane barraRolagem;
+
+    JTextArea palavras_adicionadas = new JTextArea();
+
     public Cluster() {
         JPanel tela = new JPanel();
         tela.setLayout(null);
         tela.setBackground(Color.white);
 
         tela.add(valor1);
-        valor1.setBounds(20, 60, 350, 40);
+        valor1.setBounds(20, 80, 350, 40);
 
         tela.add(tfvalor1);
-        tfvalor1.setBounds(160, 64, 200, 40);
+        tfvalor1.setBounds(130, 80, 240, 40);
 
         tela.add(mostrarsoma);
         mostrarsoma.setBounds(20, 180, 350, 40);
 
-        tela.add(tfsoma);
-        tfsoma.setBounds(20, 220, 400, 30);
+        tela.add(palavras_adicionadas);
+        palavras_adicionadas.setBounds(20, 220, 430, 80);
+        palavras_adicionadas.setBorder(new LineBorder(Color.GRAY));
+        palavras_adicionadas.setLineWrap(true);
+        palavras_adicionadas.setWrapStyleWord(true);
+        palavras_adicionadas.setEditable(false);
+        barraRolagem = new JScrollPane(palavras_adicionadas);
+        barraRolagem.setBounds(20, 220, 430, 80);
+        tela.add(barraRolagem);
 
+        //tela.add(tfsoma);
+        //tfsoma.setBounds(20, 220, 430, 80);
         tela.add(iniciar);
 
-        iniciar.setBounds(20, 130, 400, 40);
+        iniciar.setBounds(20, 20, 400, 40);
         iniciar.addActionListener(
                 new ActionListener() {
 
@@ -75,22 +92,23 @@ public class Cluster extends JFrame {
 
                         try {
 
-                            ServerSocket servidor3 = new ServerSocket(9009);
+                            ServerSocket servidor3 = new ServerSocket(9010);
 
-                            System.out.println("Esperando cliente se conectar ao servidor pela porta 9000");
+                            System.out.println("Esperando cliente se conectar ao servidor pela porta 9010");
                             while (true) {
                                 Socket cliente1 = servidor3.accept();
                                 System.out.println("Cliente " + cliente1.getInetAddress().getHostAddress() + " CONECTADO");
 
                                 Scanner entrada = new Scanner(cliente1.getInputStream());
+                                
                                 System.out.println("recebendo dados do cliente");
 
-                                String json = "";
+                                String json = entrada.nextLine();
 
                                 Modelo modelo2 = new Modelo();
 
                                 //RECEBENDO A STRING JSON
-                                modelo2 = gson.fromJson(entrada.toString(), Modelo.class);
+                                modelo2 = gson.fromJson(json, Modelo.class);
 
                                 texto = modelo2.getTexto();
 
@@ -111,7 +129,10 @@ public class Cluster extends JFrame {
 
                                 double fim = System.currentTimeMillis();
 
-                                tfsoma.setText(enviar.toString());
+                                //palavras_adicionadas.setText(enviar.toString());
+                                String aa = enviar.toString();
+                                palavras_adicionadas.insert(aa, palavras_adicionadas.getCaretPosition());
+                                palavras_adicionadas.append("\n");
 
                                 double tempoProcessamento = fim - inicial;
                                 System.out.println("Tempo de Realização da Tarefa: " + tempoProcessamento);
@@ -159,7 +180,7 @@ public class Cluster extends JFrame {
 
         add(tela);
         setVisible(true);
-        setSize(440, 440);
+        setSize(480, 350);
         setLocation(440, 100);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
