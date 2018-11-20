@@ -42,13 +42,14 @@ public class CRYPTO_AES_SERVER {
 
             String texto = entrada.nextLine();
 
-            byte[] recebido = texto.getBytes();
-
-            for (int i = 0; i < recebido.length; i++){
-                System.out.println(new Integer (recebido[i]));
+            /*
+            byte[] recebido = null;
+            for (int i = 0; i < texto.length(); i++) {
+                recebido[i] = (byte) texto.charAt(i);
             }
-            
-            System.out.println("Recebido: " + texto);
+        */
+
+            System.out.println("Recebido: " + recebido);
 
             String textodecriptado = decrypt(recebido, chaveencriptacao);
 

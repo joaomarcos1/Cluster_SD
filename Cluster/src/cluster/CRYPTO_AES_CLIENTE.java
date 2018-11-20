@@ -58,7 +58,7 @@ public class CRYPTO_AES_CLIENTE {
 
                     try (PrintStream saida = new PrintStream(cliente.getOutputStream())) {
                         //VARIÁVEL PARA ENVIAR
-                        saida.print(aa);
+                        saida.print(Arrays.toString(textoencriptado));
                         System.out.println("Resposta enviada");
                     }
                     cliente.close();
